@@ -1,0 +1,21 @@
+
+`	java:S112Q"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+`	java:S112l"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+l
+java:S1192"QDefine a constant instead of duplicating this literal "No file selected" 4 times.(±·È’ıÿÿÿÿ
+>
+java:S1604%"(Make this anonymous inner class a lambda(¼ş€Ÿ
+C
+java:S16040"(Make this anonymous inner class a lambda(Äİ¬ƒıÿÿÿÿ
+C
+java:S1604g"(Make this anonymous inner class a lambda(Ô¶µÿşÿÿÿÿ
+W
+java:S4973@"<Strings and Boxed types should be compared using "equals()".(å‡áüÿÿÿÿ
+W
+java:S4973@"<Strings and Boxed types should be compared using "equals()".(å‡áüÿÿÿÿ
+6
+java:S1170"!Make this final field static too.(áå¹>
+d
+java:S3252"IUse static access with "javax.swing.WindowConstants" for "EXIT_ON_CLOSE".(Õû»öşÿÿÿÿ
+i
+java:S1128	"LRemove this unused import 'javax.swing.filechooser.FileNameExtensionFilter'.(èüºÍ8ƒ®Ö‰1
