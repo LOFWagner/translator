@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="translator_visual:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/translator_visual_jar</output-path>
+    <root id="archive" name="translator.jar">
+      <element id="module-output" name="translator" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.9.0/gson-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/deepl/api/deepl-java/1.3.0/deepl-java-1.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
