@@ -14,7 +14,6 @@ public class Api {
     TextTranslationOptions doc;
     public Api(){
          doc = new TextTranslationOptions();
-        doc.setFormality(Formality.More);
         doc.setTagHandling("html");
     }
     public String translate(String s, String lang, String authKey) throws DeepLException, InterruptedException {

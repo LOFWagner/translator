@@ -1,9 +1,0 @@
-
-y
-java:S1488"^Immediately return this expression instead of assigning it to the temporary variable "result".(›µ¾¬þÿÿÿÿ
-N	java:S106"9Replace this use of System.out or System.err by a logger.(¯¾ªØ
-N	java:S106"9Replace this use of System.out or System.err by a logger.(éÐ›…
-?
-java:S1128")Remove this unused import 'java.io.File'.(†Ð¥Å
-K
-java:S1128"0Remove this unused import 'java.io.IOException'.(ªº»Úýÿÿÿÿ

@@ -30,13 +30,14 @@ public class FileSelectorExample extends JFrame {
         outputFileLabel = new JLabel("No file selected");
 
         // Create language selection combo box
-        String[] languages = {"en-GB", "en-US","de"};
+        String[] languages = {"en-US", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
         JComboBox<String> languageComboBox = new JComboBox<>(languages);
 
         // Create action listeners for file selectors
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int result = fileChooser.showOpenDialog(FileSelectorExample.this);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String filePath = fileChooser.getSelectedFile().getAbsolutePath();
@@ -48,6 +49,7 @@ public class FileSelectorExample extends JFrame {
         outputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int result = fileChooser.showSaveDialog(FileSelectorExample.this);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String filePath = fileChooser.getSelectedFile().getAbsolutePath();
@@ -61,16 +63,37 @@ public class FileSelectorExample extends JFrame {
         JTextField jtf = new JTextField("replace with api-key");
         jb.addActionListener(in -> {
             try {
-                if (inputFileLabel.getText() != "No file selected" && outputFileLabel.getText() != "No file selected") {
+                if (inputFileLabel.getText() != "No file selected") {
+                    File toTranslate = new File(inputFileLabel.getText());
+                    if (toTranslate.isDirectory()) {
+                        File[] fileList = toTranslate.listFiles();
+                        for (int i = 0; i < fileList.length; i++) {
+                            if (!html) {
+                                t.translate(fileList[i],
+                                    (String) languageComboBox.getSelectedItem(),
+                                    jtf.getText());
+
+                            } else {
+                                t.translateHtml(fileList[i],
+                                    (String) languageComboBox.getSelectedItem(),
+                                    jtf.getText(), new File(outputFileLabel.getText()));
+
+
+                            }
+
+
+                        }
+                        JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
+                    }
                     if (!html) {
-                        t.translate(new File(inputFileLabel.getText()), outputFileLabel.getText(),
+                        t.translate(toTranslate,
                             (String) languageComboBox.getSelectedItem(),
                             jtf.getText());
                         JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
-                    }else {
-                        t.translateHtml(new File(inputFileLabel.getText()), outputFileLabel.getText(),
+                    } else {
+                        t.translateHtml(toTranslate,
                             (String) languageComboBox.getSelectedItem(),
-                            jtf.getText());
+                            jtf.getText(), new File(outputFileLabel.getText()));
                         JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
 
                     }
@@ -83,6 +106,43 @@ public class FileSelectorExample extends JFrame {
 
         });
 
+        JButton trans_all = new JButton("Translate to all Languages");
+        trans_all.addActionListener(in -> {
+            try {
+
+                if (inputFileLabel.getText() != "No file selected") {
+                    File toTranslate = new File(inputFileLabel.getText());
+                    if (toTranslate.isDirectory()) {
+                        File[] fileList = toTranslate.listFiles();
+                        for (int i = 0; i < fileList.length; i++) {
+                            for (int h = 0; h < languages.length; h++) {
+                                t.translateHtml(fileList[i],
+                                    languages[h],
+                                    jtf.getText(), new File(outputFileLabel.getText()));
+
+                            }
+                        }
+                        JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
+                    }
+                    if (!html) {
+                        t.translate(toTranslate,
+                            (String) languageComboBox.getSelectedItem(),
+                            jtf.getText());
+                        JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
+                    } else {
+                        t.translateHtml(toTranslate,
+                            (String) languageComboBox.getSelectedItem(),
+                            jtf.getText(), new File(outputFileLabel.getText()));
+                        JOptionPane.showMessageDialog(FileSelectorExample.this, "Translated successfully");
+
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(FileSelectorExample.this, "Please enter File Path(s) / Api key");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        });
         // Create layout
         JPanel panel = new JPanel();
         panel.add(jtf);
@@ -91,8 +151,9 @@ public class FileSelectorExample extends JFrame {
         panel.add(inputFileLabel);
         panel.add(outputButton);
         panel.add(outputFileLabel);
-        panel.add(jb);
 
+        panel.add(jb);
+        panel.add(trans_all);
         getContentPane().add(panel, BorderLayout.CENTER);
         getContentPane().add(languageComboBox, BorderLayout.NORTH);
 

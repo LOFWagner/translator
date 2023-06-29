@@ -8,17 +8,20 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.JSeparator;
 
 public class Translate {
 
-    public File translate(File input, String outPath, String lang, String apiKey) throws IOException {
+    public File translate(File input, String lang, String apiKey) throws IOException {
         Api api = new Api();
         FileReader fr = null;
         BufferedReader br = null;
         String r = null;
-        File out = new File(outPath);
+
+        File out = new File(input.getAbsolutePath() + "_translated");
+
         System.out.println(out.getAbsolutePath());
-        System.out.println(outPath);
+
         BufferedWriter bw = new BufferedWriter(new FileWriter(out));
         if (!out.exists()) {
             out.createNewFile();
@@ -59,14 +62,13 @@ public class Translate {
 
     ;
 
-    public File translateHtml(File input, String outPath, String lang, String apiKey) throws IOException {
+    public File translateHtml(File input, String lang, String apiKey, File output) throws IOException {
         Api api = new Api();
         FileReader fr = null;
         BufferedReader br = null;
         String r = null;
-        File out = new File(outPath);
-        System.out.println(out.getAbsolutePath());
-        System.out.println(outPath);
+        Boolean newDir = new File(output.getPath() + File.separator + "translated_" + lang).mkdir();
+        File out = new File(output.getPath() + File.separator + "translated_" + lang + File.separator +  input.getAbsoluteFile().getName());
         BufferedWriter bw = new BufferedWriter(new FileWriter(out));
         if (!out.exists()) {
             out.createNewFile();
