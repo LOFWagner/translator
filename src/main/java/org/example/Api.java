@@ -4,8 +4,10 @@ import com.deepl.api.DeepLException;
 import com.deepl.api.Formality;
 import com.deepl.api.TextTranslationOptions;
 import com.deepl.api.Translator;
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class Api {
 
@@ -15,6 +17,7 @@ public class Api {
     public Api(){
          doc = new TextTranslationOptions();
         doc.setTagHandling("html");
+
     }
     public String translate(String s, String lang, String authKey) throws DeepLException, InterruptedException {
         translator = new Translator(authKey);
@@ -27,8 +30,7 @@ public class Api {
     public String translateHtml(String s, String lang, String authKey) throws DeepLException, InterruptedException {
         translator = new Translator(authKey);
         String result = translator.translateText(s, null, lang,doc).getText();
+
         return result;
     }
-
-
 }
