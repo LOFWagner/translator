@@ -5,11 +5,14 @@ import com.deepl.api.GlossaryInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 public class FileSelectorExample extends JFrame {
 
@@ -17,14 +20,20 @@ public class FileSelectorExample extends JFrame {
     private JLabel inputFileLabel;
     private JLabel outputFileLabel;
     private JLabel progress;
-    public final boolean html = true;
+    public boolean html = true;
     private Translate t;
-    private String[] languages = {"en", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
+    private String[] languages = {"en-us", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
     private JComboBox<String> glossaryComboBox;
     private JCheckBox useGlossaryCheckBox;
+    private JComboBox<String> sourceLanguageComboBox;
     private GlossaryManager glossaryManager;
-
+    private JLabel sourceLanguageLabel;
+    private JLabel throbberLabel;
+    private JLabel buffer;
+    private Map<String, GlossaryInfo> glossaryMap;
+    JButton jb;
     public FileSelectorExample(MainMenuManager mainMenu) throws IOException {
+        glossaryMap = new HashMap<>();
         t = new Translate();
         glossaryManager = new GlossaryManager();
         initializeUIComponents();
@@ -41,49 +50,79 @@ public class FileSelectorExample extends JFrame {
     private void initializeUIComponents() {
         setTitle("Translator v 0.1");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 400);
+        setSize(850, 400);
         setLocationRelativeTo(null);
 
         JButton inputButton = new JButton("Select Input Folder");
         JButton outputButton = new JButton("Select Output Folder");
-
         inputFileLabel = new JLabel("No file selected");
         outputFileLabel = new JLabel("No file selected");
+        buffer = new JLabel(" ");
+        URL throbberUrl = getClass().getResource("/cropped.gif");
+        if (throbberUrl != null) {
+            throbberLabel = new JLabel(new ImageIcon(throbberUrl));
+        } else {
+            throbberLabel = new JLabel("Loading...");
+            System.err.println("Throbber GIF not found at /translator/main/resources/throbber_13.gif");
+        }
+        throbberLabel.setVisible(false);
 
         JComboBox<String> languageComboBox = new JComboBox<>(languages);
         glossaryComboBox = new JComboBox<>();
+        glossaryComboBox.setVisible(false);
         useGlossaryCheckBox = new JCheckBox("Use Glossary");
-
-        JButton jb = new JButton("Translate to selected Language");
+        sourceLanguageComboBox = new JComboBox<>(languages);
+        sourceLanguageComboBox.setVisible(false);
+        sourceLanguageLabel = new JLabel("Source Language:");
+        sourceLanguageLabel.setVisible(false);
+        jb = new JButton("Translate to selected Language");
         JTextField jtf = new JTextField("replace with api-key");
         JButton trans_all = new JButton("Translate to all Languages");
-
+        JCheckBox htmlCheckBox = new JCheckBox("HTML translation mode");
         progress = new JLabel("Progress will show here");
+        JLabel targetLanguageLabel = new JLabel("Target Language:");
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 1));
+        panel.setLayout(new GridLayout(12, 1)); // Adjusted to 12 rows to accommodate the new component
         panel.add(jtf);
-        panel.add(jb);
+        panel.add(throbberLabel);
         panel.add(inputButton);
         panel.add(inputFileLabel);
         panel.add(outputButton);
         panel.add(outputFileLabel);
         panel.add(trans_all);
         panel.add(progress);
+        panel.add(targetLanguageLabel);
+        panel.add(languageComboBox);
+        panel.add(jb);
+        panel.add(buffer);
         panel.add(useGlossaryCheckBox);
         panel.add(glossaryComboBox);
+        panel.add(sourceLanguageLabel);
+        panel.add(sourceLanguageComboBox);
+        panel.add(htmlCheckBox)
+        ;
         getContentPane().add(panel, BorderLayout.CENTER);
-        getContentPane().add(languageComboBox, BorderLayout.NORTH);
     }
 
     private void setupActionListeners() {
-        JButton inputButton = (JButton) ((JPanel) getContentPane().getComponent(0)).getComponent(2);
-        JButton outputButton = (JButton) ((JPanel) getContentPane().getComponent(0)).getComponent(4);
-        JComboBox<String> languageComboBox = (JComboBox<String>) getContentPane().getComponent(1);
-        JTextField jtf = (JTextField) ((JPanel) getContentPane().getComponent(0)).getComponent(0);
-        JButton jb = (JButton) ((JPanel) getContentPane().getComponent(0)).getComponent(1);
-        JButton trans_all = (JButton) ((JPanel) getContentPane().getComponent(0)).getComponent(6);
-
+        JPanel panel = (JPanel) getContentPane().getComponent(0);
+        JTextField jtf = (JTextField) panel.getComponent(0);
+        JLabel throbberLabel = (JLabel) panel.getComponent(1);
+        JButton inputButton = (JButton) panel.getComponent(2);
+        JLabel inputFileLabel = (JLabel) panel.getComponent(3);
+        JButton outputButton = (JButton) panel.getComponent(4);
+        JLabel outputFileLabel = (JLabel) panel.getComponent(5);
+        JButton trans_all = (JButton) panel.getComponent(6);
+        JLabel progress = (JLabel) panel.getComponent(7);
+        JLabel targetLanguageLabel = (JLabel) panel.getComponent(8);
+        JComboBox<String> languageComboBox = (JComboBox<String>) panel.getComponent(9);
+        JButton jb = (JButton) panel.getComponent(10);
+        JCheckBox useGlossaryCheckBox = (JCheckBox) panel.getComponent(12);
+        JComboBox<String> glossaryComboBox = (JComboBox<String>) panel.getComponent(13);
+        JLabel sourceLanguageLabel = (JLabel) panel.getComponent(14);
+        JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(15);
+        JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(16);
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -108,9 +147,32 @@ public class FileSelectorExample extends JFrame {
             }
         });
 
-        jb.addActionListener(in -> handleTranslation(languageComboBox, jtf));
+        htmlCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                html = htmlCheckBox.isSelected();
+            }
+        });
 
-        trans_all.addActionListener(in -> handleTranslationForAllLanguages(languageComboBox, jtf));
+        useGlossaryCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean selected = useGlossaryCheckBox.isSelected();
+                sourceLanguageComboBox.setVisible(selected);
+                sourceLanguageLabel.setVisible(selected);
+                glossaryComboBox.setVisible(selected);
+            }
+        });
+
+        jb.addActionListener(in -> {
+            throbberLabel.setVisible(true);
+            handleTranslation(languageComboBox, jtf);
+            throbberLabel.setVisible(false);
+        });
+
+        trans_all.addActionListener(in -> {
+            throbberLabel.setVisible(true);
+            handleTranslationForAllLanguages(languageComboBox, jtf);
+            throbberLabel.setVisible(false);
+        });
     }
 
     private void loadGlossaries() {
@@ -122,6 +184,7 @@ public class FileSelectorExample extends JFrame {
                     glossary.getTargetLang(),
                     glossary.getCreationTime().toString());
             glossaryComboBox.addItem(displayText);
+            glossaryMap.put(displayText, glossary);
         }
     }
 
@@ -140,7 +203,15 @@ public class FileSelectorExample extends JFrame {
                         } else {
                             if (!file.isDirectory()) {
                                 if (useGlossaryCheckBox.isSelected()) {
-                                    t.translateHtmlWithGlossary(file, "en", (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
+                                    String selectedGlossary = (String) glossaryComboBox.getSelectedItem();
+                                    String sourceLang = (String) sourceLanguageComboBox.getSelectedItem();
+                                    GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
+                                    if (glossaryInfo != null) {
+                                        String glossaryId = glossaryInfo.getGlossaryId();
+                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, glossaryId);
+                                    }else {
+                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
+                                    }
                                 } else {
                                     t.translateHtml(file, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress);
                                 }
@@ -167,8 +238,13 @@ public class FileSelectorExample extends JFrame {
                     for (File file : fileList) {
                         for (String language : languages) {
                             if (useGlossaryCheckBox.isSelected()) {
-                                t.translateHtmlWithGlossary(file, "en", language, jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
-                            } else {
+                                String sourceLang = (String) sourceLanguageComboBox.getSelectedItem();
+                                String selectedGlossary = (String) glossaryComboBox.getSelectedItem();
+                                GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
+                                if (glossaryInfo != null) {
+                                    String glossaryId = glossaryInfo.getGlossaryId();
+                                    t.translateHtmlWithGlossary(file, sourceLang, language, jtf.getText(), new File(outputFileLabel.getText()), progress, glossaryId);
+                                }} else {
                                 t.translateHtml(file, language, jtf.getText(), new File(outputFileLabel.getText()), progress);
                             }
                         }
@@ -181,7 +257,12 @@ public class FileSelectorExample extends JFrame {
                     JOptionPane.showMessageDialog(FileSelectorExample.this, SUCCESSFULLY);
                 } else {
                     if (useGlossaryCheckBox.isSelected()) {
-                        t.translateHtmlWithGlossary(toTranslate, "en", (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
+                        String sourceLang = (String) sourceLanguageComboBox.getSelectedItem();
+                        if (sourceLang == null) {
+                            JOptionPane.showMessageDialog(FileSelectorExample.this, "Please select a source language for glossary mode.");
+                            return;
+                        }
+                        t.translateHtmlWithGlossary(toTranslate, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
                     } else {
                         t.translateHtml(toTranslate, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress);
                     }

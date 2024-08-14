@@ -34,10 +34,14 @@ public class Api {
     }
 
     public String translateHtml_with_glossary(String s, String lang, String authKey, String glossaryId, String source_lang) throws Exception {
+        System.out.println("GLOSSERYID: " + glossaryId);
         translator = new Translator(authKey);
         html_config_with_glossary = new TextTranslationOptions();
         html_config_with_glossary.setGlossaryId(glossaryId);
-        String result = translator.translateText(s, null, lang, html_config_with_glossary).getText();
+        if (source_lang == "en-us" || source_lang == "en-gb") {
+            source_lang = "en";
+        }
+        String result = translator.translateText(s, source_lang, lang, html_config_with_glossary).getText();
         return result;
     }
 

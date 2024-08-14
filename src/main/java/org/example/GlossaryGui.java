@@ -122,7 +122,7 @@ public class GlossaryGui extends JFrame {
         });
 
         JPanel inputPanel = new JPanel(new GridLayout(5, 2));
-        inputPanel.add(new JLabel("Glossary Name:"));
+        inputPanel.add(new JLabel("Glossary Name (can be empty):"));
         inputPanel.add(glossaryNameField);
         inputPanel.add(fileSelectorButton);
         inputPanel.add(selectedFileField);

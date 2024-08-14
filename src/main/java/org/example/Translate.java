@@ -135,7 +135,7 @@ public class Translate {
                         toTranslate.append(temp).append("\n");
                     }
 
-                    String translated = api.translateHtml_with_glossary(toTranslate.toString(), sourceLang, targetLang, apiKey, glossary);
+                    String translated = api.translateHtml_with_glossary(toTranslate.toString(),  targetLang, apiKey, glossary, sourceLang);
                     bw.write(translated);
                 } else {
                     if (!already_trans) {
@@ -162,5 +162,49 @@ public class Translate {
                 }
             }
         }
+    }
+
+    public File translateWithGlossary(File input, String sourceLang, String targetLang, String apiKey, String glossary) throws IOException {
+        Api api = new Api();
+        File out = new File(input.getAbsolutePath() + "_translated_with_glossary.txt");
+        if (!out.exists()) {
+            BufferedWriter bw = null;
+            FileReader fr = null;
+            BufferedReader br = null;
+            try {
+                bw = new BufferedWriter(new FileWriter(out));
+                fr = new FileReader(input);
+                br = new BufferedReader(fr);
+
+                String temp;
+                StringBuilder toTranslate = new StringBuilder();
+
+                while ((temp = br.readLine()) != null) {
+                    toTranslate.append(temp).append("\n");
+                }
+
+                String translated = api.translate_with_glossary(toTranslate.toString(), targetLang, apiKey, glossary, sourceLang);
+                bw.write(translated);
+            } catch (Exception e) {
+                if (out.exists()) {
+                    out.delete();
+                }
+                throw new RuntimeException(e);
+            } finally {
+                if (br != null) {
+                    br.close();
+                }
+                if (fr != null) {
+                    fr.close();
+                }
+                if (bw != null) {
+                    bw.close();
+                }
+            }
+        } else {
+            System.out.println("File already translated.");
+        }
+
+        return out;
     }
 }
