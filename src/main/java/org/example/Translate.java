@@ -1,15 +1,14 @@
+// Translate.java
 package org.example;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 
 public class Translate {
 
@@ -58,8 +57,6 @@ public class Translate {
 
         return out;
     }
-
-    ;
 
     public void translateHtml(File input, String lang, String apiKey, File output, JLabel progress) throws IOException {
         System.out.println("File to be translated: " + input.getAbsolutePath());
@@ -113,5 +110,57 @@ public class Translate {
             }
         }
     }
-}
 
+    public void translateHtmlWithGlossary(File input, String sourceLang, String targetLang, String apiKey, File output, JLabel progress, String glossary) throws IOException {
+        System.out.println("File to be translated: " + input.getAbsolutePath());
+        if (!input.isDirectory()) {
+            Api api = new Api();
+            FileReader fr = null;
+            BufferedReader br = null;
+            BufferedWriter bw = null;
+            File out = new File(output.getPath() + File.separator + "translated_" + targetLang + File.separator + input.getName());
+
+            try {
+                if (!out.exists()) {
+                    out.getParentFile().mkdirs();
+                    bw = new BufferedWriter(new FileWriter(out));
+                    fr = new FileReader(input);
+                    br = new BufferedReader(fr);
+
+                    progress.setText("Working on " + input.getName());
+                    StringBuilder toTranslate = new StringBuilder();
+                    String temp;
+
+                    while ((temp = br.readLine()) != null) {
+                        toTranslate.append(temp).append("\n");
+                    }
+
+                    String translated = api.translateHtml_with_glossary(toTranslate.toString(), sourceLang, targetLang, apiKey, glossary);
+                    bw.write(translated);
+                } else {
+                    if (!already_trans) {
+                        JOptionPane.showMessageDialog(progress, "Already translated this to " + targetLang + ", this message will only be shown once!");
+                        already_trans = true;
+                    }
+                }
+            } catch (Exception e) {
+                if (out.exists()) {
+                    out.delete();
+                }
+                progress.setText(e.getMessage());
+                JOptionPane.showMessageDialog(progress, e.getMessage());
+                throw new RuntimeException(e);
+            } finally {
+                if (br != null) {
+                    br.close();
+                }
+                if (fr != null) {
+                    fr.close();
+                }
+                if (bw != null) {
+                    bw.close();
+                }
+            }
+        }
+    }
+}
