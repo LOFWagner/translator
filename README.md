@@ -74,6 +74,8 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
 
     ```bash
     java -jar translation-tool.jar
+
+    or just double click
     ```
 
 4. The translated files will be output to the `output` folder.
