@@ -1,5 +1,4 @@
 package org.example;
-
 import com.deepl.api.DeepLException;
 import com.deepl.api.GlossaryEntries;
 import com.deepl.api.GlossaryInfo;
