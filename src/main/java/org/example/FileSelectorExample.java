@@ -1,4 +1,3 @@
-// FileSelectorExample.java
 package org.example;
 
 import com.deepl.api.GlossaryInfo;
