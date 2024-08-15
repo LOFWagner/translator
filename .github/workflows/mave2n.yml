@@ -33,7 +33,8 @@ jobs:
       run: ls -lah
     - name: enter target
       run: cd target
-           ls -a
+    - name: list targets
+      run: ls -lah
            
     
       
