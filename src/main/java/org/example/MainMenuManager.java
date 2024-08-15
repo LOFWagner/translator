@@ -15,7 +15,8 @@ public class MainMenuManager extends JFrame {
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(2, 1));
-
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         translatorButton = new JButton("Translator");
         glossaryManagerButton = new JButton("Glossary Manager");
 
