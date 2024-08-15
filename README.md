@@ -22,11 +22,18 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
     API_KEY=your_api_key_here
     ```
 
-3. Run the tool using the command:
+3. Install Java 17, preferrably corretto from this link:
+
+    ```
+    https://corretto.aws/downloads/latest/amazon-corretto-17-x64-windows-jdk.msi
+    ```
+
+4. Run the tool using the command:
 
     ```bash
     java -jar translation-tool.jar
     ```
+
 
 ### Option 2: Compile from Source
 
@@ -51,7 +58,7 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
     API_KEY=your_api_key_here
     ```
 
-4. Run the compiled tool using the command:
+4. Run the compiled tool using the command, or by simply double clicking it:
 
     ```bash
     java -jar target/translation-tool.jar
