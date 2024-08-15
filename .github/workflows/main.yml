@@ -45,6 +45,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TEST }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/translator-1.0-SNAPSHOT.jar
+        asset_path: ./target/translator-1.0-SNAPSHOT-jar-with-dependencies.jar
         asset_name: translator-1.0-SNAPSHOT.jar
         asset_content_type: application/java-archive
