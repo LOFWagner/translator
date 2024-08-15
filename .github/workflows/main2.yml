@@ -3,9 +3,8 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-        - '**/README.md'
-        - '**./github'
+    paths:
+        - ' - src/**'
   pull_request:
     branches: [ "main" ]
  
