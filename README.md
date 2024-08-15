@@ -66,7 +66,7 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
 
 ## Usage
 
-1. Place the files you want to translate into the `input` folder.
+1. Place the files you want to translate into the selected `input` folder.
 
 2. Add any specific terms you want to manage to the glossary, which currently supports the `.xlsx` file format.
 
@@ -78,4 +78,4 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
     or just double click
     ```
 
-4. The translated files will be output to the `output` folder.
+4. The translated files will be output to the selected `output` folder.
