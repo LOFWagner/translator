@@ -32,8 +32,11 @@ jobs:
     - name: List Folder
       run: ls -lah
     - name: enter target
-      run: cd target
-           ls -a
+      run: cd target/out
+    - name: results
+      run: ls -lah
+          
+    
            
     
       
