@@ -38,8 +38,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TEST }}
       with:
-        tag_name: v${{ steps.get_version.outputs.version }}
-        release_name: Release v${{ steps.get_version.outputs.version }}
+        tag_name: v${{ steps.get_version.outputs.version }}-JAVA11
+        release_name: Release v${{ steps.get_version.outputs.version }} - JAVA11
         draft: false
         prerelease: false
 
