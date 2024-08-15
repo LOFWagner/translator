@@ -1,13 +1,12 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-        - 'src/**'
   pull_request:
     branches: [ "main" ]
- 
+  workflow_run:
+    branches: [ "main" ]
+   
+   
 
 jobs:
   build:
