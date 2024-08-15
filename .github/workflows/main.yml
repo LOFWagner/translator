@@ -1,0 +1,42 @@
+name: Mirror to Java 8 Branch
+
+on:
+  push:
+    branches:
+      - main # Replace with your actual Java 17 branch name
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the Java 17 branch
+    - name: Checkout Java 17 Branch
+      uses: actions/checkout@v3
+      with:
+        ref: main # Replace with your actual Java 17 branch name
+
+    # Step 2: Sync to Java 8 Branch
+    - name: Sync to Java 8 Branch
+      run: |
+        # Checkout the Java 8 branch
+        git checkout Build_older_java
+
+        # Remove all files except for pom.xml and .github/workflows directory
+        git rm -r --cached .
+        git checkout main -- . # Restore all files from java-17-branch
+
+        # Delete the copied Java 17 pom.xml and workflow files
+        git reset pom.xml
+        git reset .github/workflows/
+
+        # Stage the changes and commit
+        git add .
+        git commit -m "Mirror changes from Java 17 branch"
+
+    # Step 3: Push the changes to the Java 8 branch using PAT
+    - name: Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # or a custom token name
+      run: |
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:Build_older_java
