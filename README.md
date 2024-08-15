@@ -1,33 +1,72 @@
-Translation Tool
+# Translation Tool
 
-This project is a translation tool designed to translate both text files and HTML files in batch within a single folder. Additionally, it includes a glossary manager to facilitate the translation process.
-Usage
+Welcome to the **Translation Tool** repository! This tool is designed to help you translate both text files (`.txt`) and HTML files (`.html`) in bulk, all within a single folder. It also includes a glossary manager to maintain consistent translations for specific terms.
 
-To use this tool, you need to create an .env file with the required environment variables. This file is essential for the tool to function properly.
-Features
+## Features
 
-    Batch translation of text and HTML files
-    Glossary manager for efficient translation
-    Easy setup with the use of an .env file
+- **Batch Translation**: Translate all text and HTML files within a specified folder.
+- **Glossary Manager**: Maintain a glossary of terms to ensure consistent translations.
+- **File Type Support**: Automatically detects and translates `.txt` and `.html` files.
+- **Easy Setup**: Simple configuration using an `.env` file.
 
-Getting Started
+## Installation
 
-To get started with this tool, follow these steps:
+### Option 1: Download the Latest Release
 
-    Clone the repository to your local machine.
-    Create an .env file with the necessary environment variables.
-    Run the tool and start translating your files.
+1. Download the latest release from the [Releases](https://github.com/yourusername/translation-tool/releases) page on GitHub.
+2. Create an `.env` file in the same directory as the `.jar` file with the necessary environment variables. This file is required for the tool to function properly.
 
-Environment Variables
+    **Example `.env` file:**
 
-The following environment variables are required in the .env file:
+    ```
+    API_KEY=your_api_key_here
+    ```
 
-    API_KEY: Your API key for the translation service
-    SOURCE_LANGUAGE: The source language for translation
-    TARGET_LANGUAGE: The target language for translation
+3. Run the tool using the command:
 
-Contributing
+    ```bash
+    java -jar translation-tool.jar
+    ```
 
-Contributions to this project are welcome. If you would like to contribute, please fork the repository and submit a pull request with your changes.
-License
-This project is licensed under the MIT License.
+### Option 2: Compile from Source
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/translation-tool.git
+    cd translation-tool
+    ```
+
+2. Compile the project using Maven:
+
+    ```bash
+    mvn clean package
+    ```
+
+3. Create an `.env` file in the root directory with the necessary environment variables. This file is required for the tool to function properly.
+
+    **Example `.env` file:**
+
+    ```
+    API_KEY=your_api_key_here
+    ```
+
+4. Run the compiled tool using the command:
+
+    ```bash
+    java -jar target/translation-tool.jar
+    ```
+
+## Usage
+
+1. Place the files you want to translate into the `input` folder.
+
+2. Add any specific terms you want to manage to the glossary, which currently supports the `.xlsx` file format.
+
+3. Run the translation tool:
+
+    ```bash
+    java -jar translation-tool.jar
+    ```
+
+4. The translated files will be output to the `output` folder.
