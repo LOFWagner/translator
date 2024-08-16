@@ -199,6 +199,10 @@ public class FileSelectorExample extends JFrame {
         });
 
         trans_all.addActionListener(in -> {
+            if (useGlossaryCheckBox.isSelected()) {
+                JOptionPane.showMessageDialog(FileSelectorExample.this, "Translate to all languages is disabled when using a glossary.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             throbberLabel.setVisible(true);
             handleTranslationForAllLanguages(languageComboBox, jtf);
             throbberLabel.setVisible(false);
