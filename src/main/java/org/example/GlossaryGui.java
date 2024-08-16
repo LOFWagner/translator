@@ -155,6 +155,9 @@ public class GlossaryGui extends JFrame {
                 glossaryListModel.addElement(glossary);
             }
         }
+        else {
+            JOptionPane.showMessageDialog(GlossaryGui.this, "APIkey invalid or no glossaries found.");
+        }
     }
 
     private class GlossaryListCellRenderer extends DefaultListCellRenderer {
