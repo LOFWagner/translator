@@ -3,6 +3,7 @@ import com.deepl.api.DeepLException;
 import com.deepl.api.GlossaryEntries;
 import com.deepl.api.GlossaryInfo;
 import com.deepl.api.Translator;
+import exceptions.EnvFileException;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,6 +11,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,13 @@ import java.util.Map;
 public class GlossaryManager {
     private Translator translator;
 
-    public GlossaryManager() {
+    public GlossaryManager() throws EnvFileException {
+        File envFile = new File(".env");
+        if (!envFile.exists()) {
+            JOptionPane.showMessageDialog(null, ".env file not found. Please ensure the .env file is present in the application directory.", "Error", JOptionPane.ERROR_MESSAGE);
+            throw new EnvFileException(".env file not found");
+
+        }
         Dotenv dotenv = Dotenv.load();
         translator = new Translator(dotenv.get("DEEPL_API_KEY"));
     }

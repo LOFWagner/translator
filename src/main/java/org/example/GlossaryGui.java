@@ -1,6 +1,7 @@
 package org.example;
 
 import com.deepl.api.GlossaryInfo;
+import exceptions.EnvFileException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,13 +23,14 @@ public class GlossaryGui extends JFrame {
     private GlossaryManager glossaryManager;
     private JButton deleteGlossaryButton;
 
-    public GlossaryGui() {
+    public GlossaryGui() throws EnvFileException {
         glossaryManager = new GlossaryManager();
         setTitle("Create New Glossary");
         setSize(600, 400); // Adjusted size to accommodate larger display
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout()); // Changed to BorderLayout
-
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         glossaryNameField = new JTextField();
         selectedFileField = new JTextField();
         selectedFileField.setEditable(false);
