@@ -1,5 +1,7 @@
 package org.example;
 
+import exceptions.EnvFileException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,7 +27,7 @@ public class MainMenuManager extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     openTranslator();
-                } catch (IOException ex) {
+                } catch (IOException | EnvFileException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -42,7 +44,7 @@ public class MainMenuManager extends JFrame {
         add(glossaryManagerButton);
     }
 
-    private void openTranslator() throws IOException {
+    private void openTranslator() throws IOException, EnvFileException {
         setVisible(false);
         FileSelectorExample translator = new FileSelectorExample(this);
         translator.setVisible(true);
@@ -56,14 +58,20 @@ public class MainMenuManager extends JFrame {
 
     private void openGlossaryManager() {
         setVisible(false);
-        GlossaryGui glossaryGui = new GlossaryGui();
-        glossaryGui.setVisible(true);
-        glossaryGui.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                setVisible(true);
-            }
-        });
+
+        GlossaryGui glossaryGui = null;
+        try {
+            glossaryGui = new GlossaryGui();
+            glossaryGui.setVisible(true);
+            glossaryGui.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                    setVisible(true);
+                }
+            });
+        } catch (EnvFileException e) {
+            setVisible(true);
+        }
     }
 
     public static void main(String[] args) {
