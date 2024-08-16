@@ -49,7 +49,7 @@ public class FileSelectorExample extends JFrame {
 
         initializeUIComponents();
         setupActionListeners();
-        loadGlossaries();
+        loadGlossaries(mainMenu);
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -217,16 +217,23 @@ public class FileSelectorExample extends JFrame {
         });
     }
 
-    private void loadGlossaries() {
+    private void loadGlossaries(MainMenuManager mainMenu) {
         List<GlossaryInfo> glossaries = glossaryManager.getGlossaries();
-        for (GlossaryInfo glossary : glossaries) {
-            String displayText = String.format("%s (%s -> %s) - Created on: %s",
-                    glossary.getName(),
-                    glossary.getSourceLang(),
-                    glossary.getTargetLang(),
-                    glossary.getCreationTime().toString());
-            glossaryComboBox.addItem(displayText);
-            glossaryMap.put(displayText, glossary);
+        try {
+
+
+            for (GlossaryInfo glossary : glossaries) {
+                String displayText = String.format("%s (%s -> %s) - Created on: %s",
+                        glossary.getName(),
+                        glossary.getSourceLang(),
+                        glossary.getTargetLang(),
+                        glossary.getCreationTime().toString());
+                glossaryComboBox.addItem(displayText);
+                glossaryMap.put(displayText, glossary);
+            }
+        }catch (NullPointerException e){
+            JOptionPane.showMessageDialog(FileSelectorExample.this, "APIkey invalid", "Error", JOptionPane.ERROR_MESSAGE);
+            mainMenu.setVisible(true);
         }
     }
 
