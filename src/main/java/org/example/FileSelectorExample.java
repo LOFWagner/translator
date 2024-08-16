@@ -8,6 +8,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
@@ -22,7 +24,7 @@ public class FileSelectorExample extends JFrame {
     private JLabel inputFileLabel;
     private JLabel outputFileLabel;
     private JLabel progress;
-    public boolean html = true;
+    public boolean html = false;
     private Translate t;
     private String[] languages = {"en-us", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
     private JComboBox<String> glossaryComboBox;
@@ -104,8 +106,7 @@ public class FileSelectorExample extends JFrame {
         panel.add(glossaryComboBox);
         panel.add(sourceLanguageLabel);
         panel.add(sourceLanguageComboBox);
-        panel.add(htmlCheckBox)
-        ;
+        panel.add(htmlCheckBox);
         getContentPane().add(panel, BorderLayout.CENTER);
     }
 
@@ -127,6 +128,7 @@ public class FileSelectorExample extends JFrame {
         JLabel sourceLanguageLabel = (JLabel) panel.getComponent(14);
         JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(15);
         JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(16);
+
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -163,6 +165,30 @@ public class FileSelectorExample extends JFrame {
                 sourceLanguageComboBox.setVisible(selected);
                 sourceLanguageLabel.setVisible(selected);
                 glossaryComboBox.setVisible(selected);
+            }
+        });
+
+        jtf.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String newApiKey = jtf.getText();
+                try {
+                    File envFile = new File(".env");
+                    if (envFile.exists()) {
+                        List<String> lines = Files.readAllLines(envFile.toPath());
+                        for (int i = 0; i < lines.size(); i++) {
+                            if (lines.get(i).startsWith("DEEPL_API_KEY=")) {
+                                lines.set(i, "DEEPL_API_KEY=" + newApiKey);
+                                break;
+                            }
+                        }
+                        Files.write(envFile.toPath(), lines);
+                    } else {
+                        Files.write(envFile.toPath(), Collections.singletonList("DEEPL_API_KEY=" + newApiKey));
+                    }
+                    JOptionPane.showMessageDialog(FileSelectorExample.this, "API key successfully changed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(FileSelectorExample.this, "Error updating .env file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
