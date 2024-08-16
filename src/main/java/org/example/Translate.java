@@ -1,12 +1,8 @@
 // Translate.java
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -111,20 +107,24 @@ public class Translate {
         }
     }
 
+
+
     public void translateHtmlWithGlossary(File input, String sourceLang, String targetLang, String apiKey, File output, JLabel progress, String glossary) throws IOException {
         System.out.println("File to be translated: " + input.getAbsolutePath());
         if (!input.isDirectory()) {
             Api api = new Api();
-            FileReader fr = null;
+            InputStreamReader fr = null;
             BufferedReader br = null;
+            OutputStreamWriter fw = null;
             BufferedWriter bw = null;
             File out = new File(output.getPath() + File.separator + "translated_" + targetLang + File.separator + input.getName());
 
             try {
                 if (!out.exists()) {
                     out.getParentFile().mkdirs();
-                    bw = new BufferedWriter(new FileWriter(out));
-                    fr = new FileReader(input);
+                    fw = new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8);
+                    bw = new BufferedWriter(fw);
+                    fr = new InputStreamReader(new FileInputStream(input), StandardCharsets.UTF_8);
                     br = new BufferedReader(fr);
 
                     progress.setText("Working on " + input.getName());
@@ -135,7 +135,7 @@ public class Translate {
                         toTranslate.append(temp).append("\n");
                     }
 
-                    String translated = api.translateHtml_with_glossary(toTranslate.toString(),  targetLang, apiKey, glossary, sourceLang);
+                    String translated = api.translateHtml_with_glossary(toTranslate.toString(), targetLang, apiKey, glossary, sourceLang);
                     bw.write(translated);
                 } else {
                     if (!already_trans) {
@@ -159,6 +159,9 @@ public class Translate {
                 }
                 if (bw != null) {
                     bw.close();
+                }
+                if (fw != null) {
+                    fw.close();
                 }
             }
         }

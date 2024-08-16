@@ -24,7 +24,7 @@ public class FileSelectorExample extends JFrame {
     private JLabel inputFileLabel;
     private JLabel outputFileLabel;
     private JLabel progress;
-    public boolean html = false;
+    public boolean html = true;
     private Translate t;
     private String[] languages = {"en-us", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
     private JComboBox<String> glossaryComboBox;
@@ -36,10 +36,17 @@ public class FileSelectorExample extends JFrame {
     private JLabel buffer;
     private Map<String, GlossaryInfo> glossaryMap;
     JButton jb;
-    public FileSelectorExample(MainMenuManager mainMenu) throws IOException, EnvFileException {
+    public FileSelectorExample(MainMenuManager mainMenu) throws IOException {
         glossaryMap = new HashMap<>();
         t = new Translate();
-        glossaryManager = new GlossaryManager();
+
+        try {
+            glossaryManager = new GlossaryManager();
+        } catch (EnvFileException e) {
+            JOptionPane.showMessageDialog(null, ".env file not found. Please ensure the .env file is present in the application directory.", "Error", JOptionPane.ERROR_MESSAGE);
+            mainMenu.setVisible(true);
+        }
+
         initializeUIComponents();
         setupActionListeners();
         loadGlossaries();
@@ -85,6 +92,7 @@ public class FileSelectorExample extends JFrame {
         JTextField jtf = new JTextField(key);
         JButton trans_all = new JButton("Translate to all Languages");
         JCheckBox htmlCheckBox = new JCheckBox("HTML translation mode");
+        htmlCheckBox.setSelected(true);
         progress = new JLabel("Progress will show here");
         JLabel targetLanguageLabel = new JLabel("Target Language:");
 
