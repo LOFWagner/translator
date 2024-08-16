@@ -1,6 +1,9 @@
 package org.example;
 
 import com.deepl.api.GlossaryInfo;
+import com.deepl.api.Translator;
+import exceptions.EnvFileException;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +34,7 @@ public class FileSelectorExample extends JFrame {
     private JLabel buffer;
     private Map<String, GlossaryInfo> glossaryMap;
     JButton jb;
-    public FileSelectorExample(MainMenuManager mainMenu) throws IOException {
+    public FileSelectorExample(MainMenuManager mainMenu) throws IOException, EnvFileException {
         glossaryMap = new HashMap<>();
         t = new Translate();
         glossaryManager = new GlossaryManager();
@@ -75,7 +78,9 @@ public class FileSelectorExample extends JFrame {
         sourceLanguageLabel = new JLabel("Source Language:");
         sourceLanguageLabel.setVisible(false);
         jb = new JButton("Translate to selected Language");
-        JTextField jtf = new JTextField("replace with api-key");
+        Dotenv dotenv = Dotenv.load();
+        String key = dotenv.get("DEEPL_API_KEY");
+        JTextField jtf = new JTextField(key);
         JButton trans_all = new JButton("Translate to all Languages");
         JCheckBox htmlCheckBox = new JCheckBox("HTML translation mode");
         progress = new JLabel("Progress will show here");
