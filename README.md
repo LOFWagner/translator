@@ -19,7 +19,7 @@ Welcome to the **Translation Tool** repository! This tool is designed to help yo
     **Example `.env` file:**
 
     ```
-    API_KEY=your_api_key_here
+    DEEPL_API_KEY=your_api_key_here
     ```
 
 3. Install Java 17, preferrably corretto from this link:
