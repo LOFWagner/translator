@@ -46,7 +46,7 @@ public class MainMenuManager extends JFrame {
 
     private void openTranslator() throws IOException, EnvFileException {
         setVisible(false);
-        FileSelectorExample translator = new FileSelectorExample(this);
+        TranslatorGui translator = new TranslatorGui(this);
         translator.setVisible(true);
         translator.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override

@@ -1,10 +1,8 @@
 package org.example;
 
 import com.deepl.api.GlossaryInfo;
-import com.deepl.api.Translator;
 import exceptions.EnvFileException;
 import io.github.cdimascio.dotenv.Dotenv;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,7 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
-public class FileSelectorExample extends JFrame {
+public class TranslatorGui extends JFrame {
 
     public static final String SUCCESSFULLY = "Translated successfully";
     private JLabel inputFileLabel;
@@ -36,7 +34,7 @@ public class FileSelectorExample extends JFrame {
     private JLabel buffer;
     private Map<String, GlossaryInfo> glossaryMap;
     JButton jb;
-    public FileSelectorExample(MainMenuManager mainMenu) throws IOException {
+    public TranslatorGui(MainMenuManager mainMenu) throws IOException {
         glossaryMap = new HashMap<>();
         t = new Translate();
 
@@ -136,27 +134,28 @@ public class FileSelectorExample extends JFrame {
         JLabel sourceLanguageLabel = (JLabel) panel.getComponent(14);
         JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(15);
         JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(16);
-
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
+                JFileChooser fileChooser = new JSystemFileChooser();
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int result = fileChooser.showOpenDialog(FileSelectorExample.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                    inputFileLabel.setText(filePath);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                int returnValue = fileChooser.showOpenDialog(TranslatorGui.this);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    inputFileLabel.setText(selectedFile.getAbsolutePath());
                 }
             }
         });
 
         outputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
+                JFileChooser fileChooser = new JSystemFileChooser();
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int result = fileChooser.showSaveDialog(FileSelectorExample.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                    outputFileLabel.setText(filePath);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                int returnValue = fileChooser.showSaveDialog(TranslatorGui.this);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    outputFileLabel.setText(selectedFile.getAbsolutePath());
                 }
             }
         });
@@ -193,9 +192,9 @@ public class FileSelectorExample extends JFrame {
                     } else {
                         Files.write(envFile.toPath(), Collections.singletonList("DEEPL_API_KEY=" + newApiKey));
                     }
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, "API key successfully changed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, "API key successfully changed.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, "Error updating .env file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, "Error updating .env file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -208,7 +207,7 @@ public class FileSelectorExample extends JFrame {
 
         trans_all.addActionListener(in -> {
             if (useGlossaryCheckBox.isSelected()) {
-                JOptionPane.showMessageDialog(FileSelectorExample.this, "Translate to all languages is disabled when using a glossary.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(TranslatorGui.this, "Translate to all languages is disabled when using a glossary.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             throbberLabel.setVisible(true);
@@ -232,7 +231,7 @@ public class FileSelectorExample extends JFrame {
                 glossaryMap.put(displayText, glossary);
             }
         }catch (NullPointerException e){
-            JOptionPane.showMessageDialog(FileSelectorExample.this, "APIkey invalid", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(TranslatorGui.this, "APIkey invalid", "Error", JOptionPane.ERROR_MESSAGE);
             mainMenu.setVisible(true);
         }
     }
@@ -267,10 +266,10 @@ public class FileSelectorExample extends JFrame {
                             }
                         }
                     }
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, SUCCESSFULLY);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
             } else {
-                JOptionPane.showMessageDialog(FileSelectorExample.this, "Please enter File Path(s) / Api key");
+                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s) / Api key");
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(progress, e.getMessage());
@@ -299,26 +298,26 @@ public class FileSelectorExample extends JFrame {
                         }
                     }
                     progress.setText("Finished");
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, SUCCESSFULLY);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
                 if (!html) {
                     t.translate(toTranslate, (String) languageComboBox.getSelectedItem(), jtf.getText());
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, SUCCESSFULLY);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 } else {
                     if (useGlossaryCheckBox.isSelected()) {
                         String sourceLang = (String) sourceLanguageComboBox.getSelectedItem();
                         if (sourceLang == null) {
-                            JOptionPane.showMessageDialog(FileSelectorExample.this, "Please select a source language for glossary mode.");
+                            JOptionPane.showMessageDialog(TranslatorGui.this, "Please select a source language for glossary mode.");
                             return;
                         }
                         t.translateHtmlWithGlossary(toTranslate, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
                     } else {
                         t.translateHtml(toTranslate, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress);
                     }
-                    JOptionPane.showMessageDialog(FileSelectorExample.this, SUCCESSFULLY);
+                    JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
             } else {
-                JOptionPane.showMessageDialog(FileSelectorExample.this, "Please enter File Path(s) / Api key");
+                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s) / Api key");
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(progress, e.getMessage());
