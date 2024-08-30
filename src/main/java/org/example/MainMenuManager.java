@@ -13,14 +13,20 @@ public class MainMenuManager extends JFrame {
     private JButton glossaryManagerButton;
 
     public MainMenuManager() {
-        setTitle("Main Menu");
-        setSize(300, 200);
+        setTitle("Welcome to the Application");
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(2, 1));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         translatorButton = new JButton("Translator");
         glossaryManagerButton = new JButton("Glossary Manager");
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         translatorButton.addActionListener(new ActionListener() {
             @Override
