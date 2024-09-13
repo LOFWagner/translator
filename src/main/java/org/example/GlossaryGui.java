@@ -6,8 +6,11 @@ import exceptions.EnvFileException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -37,8 +40,12 @@ public class GlossaryGui extends JFrame {
         selectedFileField.setEditable(false);
         JButton fileSelectorButton = new JButton("Select Input File");
         inputFileLabel = new JLabel("No file selected");
-        inputLanguageComboBox = new JComboBox<>(new String[]{"en", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"});
-        outputLanguageComboBox = new JComboBox<>(new String[]{"en", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"});
+        inputLanguageComboBox = new JComboBox<>(new String[]{
+                "de", "da", "en", "es", "fr", "it", "ja", "ko", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "zh"
+        });
+        outputLanguageComboBox = new JComboBox<>(new String[]{
+                "en", "de", "da", "es", "fr", "it", "ja", "ko", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "zh"
+        });
         JButton createGlossaryButton = new JButton("Create Glossary");
 
         // Load throbber GIF
@@ -103,6 +110,27 @@ public class GlossaryGui extends JFrame {
                         }
                     }
                 }.execute();
+            }
+        });
+
+
+
+        glossaryList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e) && !glossaryList.isSelectionEmpty() && glossaryList.locationToIndex(e.getPoint()) == glossaryList.getSelectedIndex()) {
+                    JPopupMenu contextMenu = new JPopupMenu();
+                    JMenuItem copyIdItem = new JMenuItem("Copy Glossary ID");
+                    copyIdItem.addActionListener(event -> {
+                        GlossaryInfo selectedGlossary = glossaryList.getSelectedValue();
+                        if (selectedGlossary != null) {
+                            StringSelection stringSelection = new StringSelection(selectedGlossary.getGlossaryId());
+                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
+                        }
+                    });
+                    contextMenu.add(copyIdItem);
+                    contextMenu.show(glossaryList, e.getX(), e.getY());
+                }
             }
         });
 
