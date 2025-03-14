@@ -85,9 +85,6 @@ public class TranslatorGui extends JFrame {
         sourceLanguageLabel = new JLabel("Source Language:");
         sourceLanguageLabel.setVisible(false);
         jb = new JButton("Translate to selected Language");
-        Dotenv dotenv = Dotenv.load();
-        String key = dotenv.get("DEEPL_API_KEY");
-        JTextField jtf = new JTextField(key);
         JButton trans_all = new JButton("Translate to all Languages");
         JCheckBox htmlCheckBox = new JCheckBox("HTML translation mode");
         htmlCheckBox.setSelected(true);
@@ -95,8 +92,7 @@ public class TranslatorGui extends JFrame {
         JLabel targetLanguageLabel = new JLabel("Target Language:");
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(12, 1)); // Adjusted to 12 rows to accommodate the new component
-        panel.add(jtf);
+        panel.setLayout(new GridLayout(11, 1)); // Adjusted to 11 rows after removing API key field
         panel.add(throbberLabel);
         panel.add(inputButton);
         panel.add(inputFileLabel);
@@ -118,22 +114,21 @@ public class TranslatorGui extends JFrame {
 
     private void setupActionListeners() {
         JPanel panel = (JPanel) getContentPane().getComponent(0);
-        JTextField jtf = (JTextField) panel.getComponent(0);
-        JLabel throbberLabel = (JLabel) panel.getComponent(1);
-        JButton inputButton = (JButton) panel.getComponent(2);
-        JLabel inputFileLabel = (JLabel) panel.getComponent(3);
-        JButton outputButton = (JButton) panel.getComponent(4);
-        JLabel outputFileLabel = (JLabel) panel.getComponent(5);
-        JButton trans_all = (JButton) panel.getComponent(6);
-        JLabel progress = (JLabel) panel.getComponent(7);
-        JLabel targetLanguageLabel = (JLabel) panel.getComponent(8);
-        JComboBox<String> languageComboBox = (JComboBox<String>) panel.getComponent(9);
-        JButton jb = (JButton) panel.getComponent(10);
-        JCheckBox useGlossaryCheckBox = (JCheckBox) panel.getComponent(12);
-        JComboBox<String> glossaryComboBox = (JComboBox<String>) panel.getComponent(13);
-        JLabel sourceLanguageLabel = (JLabel) panel.getComponent(14);
-        JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(15);
-        JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(16);
+        JLabel throbberLabel = (JLabel) panel.getComponent(0);
+        JButton inputButton = (JButton) panel.getComponent(1);
+        JLabel inputFileLabel = (JLabel) panel.getComponent(2);
+        JButton outputButton = (JButton) panel.getComponent(3);
+        JLabel outputFileLabel = (JLabel) panel.getComponent(4);
+        JButton trans_all = (JButton) panel.getComponent(5);
+        JLabel progress = (JLabel) panel.getComponent(6);
+        JLabel targetLanguageLabel = (JLabel) panel.getComponent(7);
+        JComboBox<String> languageComboBox = (JComboBox<String>) panel.getComponent(8);
+        JButton jb = (JButton) panel.getComponent(9);
+        JCheckBox useGlossaryCheckBox = (JCheckBox) panel.getComponent(11);
+        JComboBox<String> glossaryComboBox = (JComboBox<String>) panel.getComponent(12);
+        JLabel sourceLanguageLabel = (JLabel) panel.getComponent(13);
+        JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(14);
+        JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(15);
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JSystemFileChooser();
@@ -175,33 +170,9 @@ public class TranslatorGui extends JFrame {
             }
         });
 
-        jtf.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String newApiKey = jtf.getText();
-                try {
-                    File envFile = new File(".env");
-                    if (envFile.exists()) {
-                        List<String> lines = Files.readAllLines(envFile.toPath());
-                        for (int i = 0; i < lines.size(); i++) {
-                            if (lines.get(i).startsWith("DEEPL_API_KEY=")) {
-                                lines.set(i, "DEEPL_API_KEY=" + newApiKey);
-                                break;
-                            }
-                        }
-                        Files.write(envFile.toPath(), lines);
-                    } else {
-                        Files.write(envFile.toPath(), Collections.singletonList("DEEPL_API_KEY=" + newApiKey));
-                    }
-                    JOptionPane.showMessageDialog(TranslatorGui.this, "API key successfully changed.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(TranslatorGui.this, "Error updating .env file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
         jb.addActionListener(in -> {
             throbberLabel.setVisible(true);
-            handleTranslation(languageComboBox, jtf);
+            handleTranslation(languageComboBox);
             throbberLabel.setVisible(false);
         });
 
@@ -211,7 +182,7 @@ public class TranslatorGui extends JFrame {
                 return;
             }
             throbberLabel.setVisible(true);
-            handleTranslationForAllLanguages(languageComboBox, jtf);
+            handleTranslationForAllLanguages(languageComboBox);
             throbberLabel.setVisible(false);
         });
     }
@@ -219,8 +190,6 @@ public class TranslatorGui extends JFrame {
     private void loadGlossaries(MainMenuManager mainMenu) {
         List<GlossaryInfo> glossaries = glossaryManager.getGlossaries();
         try {
-
-
             for (GlossaryInfo glossary : glossaries) {
                 String displayText = String.format("%s (%s -> %s) - Created on: %s",
                         glossary.getName(),
@@ -230,23 +199,24 @@ public class TranslatorGui extends JFrame {
                 glossaryComboBox.addItem(displayText);
                 glossaryMap.put(displayText, glossary);
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(TranslatorGui.this, "APIkey invalid", "Error", JOptionPane.ERROR_MESSAGE);
             mainMenu.setVisible(true);
         }
     }
 
-    private void handleTranslation(JComboBox<String> languageComboBox, JTextField jtf) {
+    private void handleTranslation(JComboBox<String> languageComboBox) {
         try {
             System.out.println("Translate button clicked");
             if (!inputFileLabel.getText().equals("No file selected")) {
+                String apiKey = Dotenv.load().get("DEEPL_API_KEY");
                 File toTranslate = new File(inputFileLabel.getText());
                 if (toTranslate.isDirectory()) {
                     File[] fileList = toTranslate.listFiles();
                     for (File file : fileList) {
                         if (!html) {
                             if (!file.isDirectory()) {
-                                t.translate(file, (String) languageComboBox.getSelectedItem(), jtf.getText());
+                                t.translate(file, (String) languageComboBox.getSelectedItem(), apiKey);
                             }
                         } else {
                             if (!file.isDirectory()) {
@@ -256,12 +226,12 @@ public class TranslatorGui extends JFrame {
                                     GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
                                     if (glossaryInfo != null) {
                                         String glossaryId = glossaryInfo.getGlossaryId();
-                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, glossaryId);
-                                    }else {
-                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
+                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), apiKey, new File(outputFileLabel.getText()), progress, glossaryId);
+                                    } else {
+                                        t.translateHtmlWithGlossary(file, sourceLang, (String) languageComboBox.getSelectedItem(), apiKey, new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
                                     }
                                 } else {
-                                    t.translateHtml(file, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress);
+                                    t.translateHtml(file, (String) languageComboBox.getSelectedItem(), apiKey, new File(outputFileLabel.getText()), progress);
                                 }
                             }
                         }
@@ -269,7 +239,7 @@ public class TranslatorGui extends JFrame {
                     JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
             } else {
-                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s) / Api key");
+                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s)");
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(progress, e.getMessage());
@@ -277,9 +247,10 @@ public class TranslatorGui extends JFrame {
         }
     }
 
-    private void handleTranslationForAllLanguages(JComboBox<String> languageComboBox, JTextField jtf) {
+    private void handleTranslationForAllLanguages(JComboBox<String> languageComboBox) {
         try {
             if (!inputFileLabel.getText().equals("No file selected")) {
+                String apiKey = Dotenv.load().get("DEEPL_API_KEY");
                 File toTranslate = new File(inputFileLabel.getText());
                 if (toTranslate.isDirectory()) {
                     File[] fileList = toTranslate.listFiles();
@@ -291,9 +262,10 @@ public class TranslatorGui extends JFrame {
                                 GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
                                 if (glossaryInfo != null) {
                                     String glossaryId = glossaryInfo.getGlossaryId();
-                                    t.translateHtmlWithGlossary(file, sourceLang, language, jtf.getText(), new File(outputFileLabel.getText()), progress, glossaryId);
-                                }} else {
-                                t.translateHtml(file, language, jtf.getText(), new File(outputFileLabel.getText()), progress);
+                                    t.translateHtmlWithGlossary(file, sourceLang, language, apiKey, new File(outputFileLabel.getText()), progress, glossaryId);
+                                }
+                            } else {
+                                t.translateHtml(file, language, apiKey, new File(outputFileLabel.getText()), progress);
                             }
                         }
                     }
@@ -301,7 +273,7 @@ public class TranslatorGui extends JFrame {
                     JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
                 if (!html) {
-                    t.translate(toTranslate, (String) languageComboBox.getSelectedItem(), jtf.getText());
+                    t.translate(toTranslate, (String) languageComboBox.getSelectedItem(), apiKey);
                     JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 } else {
                     if (useGlossaryCheckBox.isSelected()) {
@@ -310,14 +282,14 @@ public class TranslatorGui extends JFrame {
                             JOptionPane.showMessageDialog(TranslatorGui.this, "Please select a source language for glossary mode.");
                             return;
                         }
-                        t.translateHtmlWithGlossary(toTranslate, sourceLang, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
+                        t.translateHtmlWithGlossary(toTranslate, sourceLang, (String) languageComboBox.getSelectedItem(), apiKey, new File(outputFileLabel.getText()), progress, (String) glossaryComboBox.getSelectedItem());
                     } else {
-                        t.translateHtml(toTranslate, (String) languageComboBox.getSelectedItem(), jtf.getText(), new File(outputFileLabel.getText()), progress);
+                        t.translateHtml(toTranslate, (String) languageComboBox.getSelectedItem(), apiKey, new File(outputFileLabel.getText()), progress);
                     }
                     JOptionPane.showMessageDialog(TranslatorGui.this, SUCCESSFULLY);
                 }
             } else {
-                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s) / Api key");
+                JOptionPane.showMessageDialog(TranslatorGui.this, "Please enter File Path(s)");
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(progress, e.getMessage());
