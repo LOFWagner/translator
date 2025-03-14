@@ -63,17 +63,22 @@ public class GlossaryManager {
         if (name == null || name.isEmpty()) {
             name = "Glossary";
         }
-        if (file.getName().endsWith(".xlsx")) {
-            File csvFile = convertXlsxToCSV(file);
-            Map<String, String> entries = convertCsvToMap(csvFile);
-            GlossaryEntries glossaryEntries = new GlossaryEntries(entries);
-            try {
+        try {
+            if (file.getName().endsWith(".xlsx")) {
+                File csvFile = convertXlsxToCSV(file);
+                Map<String, String> entries = convertCsvToMap(csvFile);
+                GlossaryEntries glossaryEntries = new GlossaryEntries(entries);
                 return addGlossary(glossaryEntries, name, sourceLang, targetLang);
-            } catch (DeepLException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } else if (file.getName().endsWith(".csv")) {
+                Map<String, String> entries = convertCsvToMap(file);
+                GlossaryEntries glossaryEntries = new GlossaryEntries(entries);
+                return addGlossary(glossaryEntries, name, sourceLang, targetLang);
+            } else {
+                throw new IllegalArgumentException("File must be in .xlsx or .csv format");
             }
-        } else {
-            throw new IllegalArgumentException("File must be in .xlsx format");
+        } catch (DeepLException | InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to create glossary: " + e.getMessage(), e);
         }
     }
 
