@@ -138,13 +138,15 @@ public class GlossaryManager {
         }
     }
 
-
-
-
     private Map<String, String> convertCsvToMap(File csvFile) {
         Map<String, String> map = new HashMap<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(csvFile));
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(csvFile),
+                            StandardCharsets.UTF_8
+                    )
+            );
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
