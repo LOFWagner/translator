@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,11 +89,17 @@ public class GlossaryManager {
             Workbook workbook = new XSSFWorkbook(file);
             Sheet sheet = workbook.getSheetAt(0);
             File csvFile = new File(xlsxFile.getAbsolutePath() + ".csv");
-            BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile));
+
+            BufferedWriter bw = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(csvFile),
+                            StandardCharsets.UTF_8
+                    )
+            );
 
             for (Row row : sheet) {
                 StringBuilder line = new StringBuilder();
-                boolean hasContent = false;  // Flag to track if any cell has non-empty content
+                boolean hasContent = false;
                 String[] cellValues = new String[2];
 
                 for (int i = 0; i < Math.min(2, row.getLastCellNum()); i++) {
@@ -109,13 +116,12 @@ public class GlossaryManager {
                     }
                 }
 
-                // Check if both cells are non-empty
-                if (cellValues[0] != null && !cellValues[0].isEmpty() && cellValues[1] != null && !cellValues[1].isEmpty()) {
+                if (cellValues[0] != null && !cellValues[0].isEmpty() &&
+                        cellValues[1] != null && !cellValues[1].isEmpty()) {
                     line.append(cellValues[0]).append(",").append(cellValues[1]);
                     hasContent = true;
                 }
 
-                // Write the line if it contains non-empty content, to avoid empty lines or lines with only commas
                 if (hasContent) {
                     bw.write(line.toString());
                     bw.newLine();
@@ -124,6 +130,8 @@ public class GlossaryManager {
             }
 
             bw.close();
+            workbook.close();
+            file.close();
             return csvFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
