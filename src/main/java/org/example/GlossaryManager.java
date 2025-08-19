@@ -106,13 +106,13 @@ public class GlossaryManager {
                     if (row.getCell(i) != null) {
                         String cellValue = "";
                         if (row.getCell(i).getCellType() == CellType.STRING) {
-                            cellValue = row.getCell(i).getStringCellValue().trim();
+                            cellValue = row.getCell(i).getStringCellValue();
                         } else if (row.getCell(i).getCellType() == CellType.NUMERIC) {
-                            cellValue = String.valueOf(row.getCell(i).getNumericCellValue()).trim();
+                            cellValue = String.valueOf(row.getCell(i).getNumericCellValue());
                         }
 
-                        cellValue = cellValue.replace("\"", "");
-                        cellValues[i] = removeTrailingWhitespaces(cellValue);
+                        cellValue = cellValue.replace('\u00A0', ' ').replace("\"", "").trim();
+                        cellValues[i] = cellValue;
                     }
                 }
 
@@ -159,17 +159,6 @@ public class GlossaryManager {
             throw new RuntimeException(e);
         }
         return map;
-    }
-
-    private String removeTrailingWhitespaces(String input) {
-        if (input == null) {
-            return null;
-        }
-        int end = input.length() - 1;
-        while (end >= 0 && (Character.isWhitespace(input.charAt(end)) || input.charAt(end) == '\u00A0')) {
-            end--;
-        }
-        return input.substring(0, end + 1);
     }
 
     public boolean deleteAllGlossaries() {
