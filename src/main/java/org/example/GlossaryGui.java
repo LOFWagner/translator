@@ -40,12 +40,8 @@ public class GlossaryGui extends JFrame {
         selectedFileField.setEditable(false);
         JButton fileSelectorButton = new JButton("Select Input File");
         inputFileLabel = new JLabel("No file selected");
-        inputLanguageComboBox = new JComboBox<>(new String[]{
-                "de", "da", "en", "es", "fr", "it", "ja", "ko", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "zh"
-        });
-        outputLanguageComboBox = new JComboBox<>(new String[]{
-                "en", "de", "da", "es", "fr", "it", "ja", "ko", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "zh"
-        });
+        inputLanguageComboBox = new JComboBox<>(Constants.LANGUAGES);
+        outputLanguageComboBox = new JComboBox<>(Constants.LANGUAGES);
         JButton createGlossaryButton = new JButton("Create Glossary");
 
         // Load throbber GIF

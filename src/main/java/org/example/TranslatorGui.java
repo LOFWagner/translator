@@ -24,7 +24,7 @@ public class TranslatorGui extends JFrame {
     private JLabel progress;
     public boolean html = true;
     private Translate t;
-    private String[] languages = {"en-us", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
+    private String[] languages = Constants.LANGUAGES;
     private JComboBox<String> glossaryComboBox;
     private JCheckBox useGlossaryCheckBox;
     private JComboBox<String> sourceLanguageComboBox;
