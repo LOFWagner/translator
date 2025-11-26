@@ -33,7 +33,13 @@ public class TranslatorGui extends JFrame {
     private JLabel throbberLabel;
     private JLabel buffer;
     private Map<String, GlossaryInfo> glossaryMap;
-    JButton jb;
+    private JButton jb;
+    private JButton inputButton;
+    private JButton outputButton;
+    private JComboBox<String> languageComboBox;
+    private JButton trans_all;
+    private JCheckBox htmlCheckBox;
+    private JLabel targetLanguageLabel;
     public TranslatorGui(MainMenuManager mainMenu) throws IOException {
         glossaryMap = new HashMap<>();
         t = new Translate();
@@ -62,8 +68,8 @@ public class TranslatorGui extends JFrame {
         setSize(850, 400);
         setLocationRelativeTo(null);
 
-        JButton inputButton = new JButton("Select Input Folder");
-        JButton outputButton = new JButton("Select Output Folder");
+        inputButton = new JButton("Select Input Folder");
+        outputButton = new JButton("Select Output Folder");
         inputFileLabel = new JLabel("No file selected");
         outputFileLabel = new JLabel("No file selected");
         buffer = new JLabel(" ");
@@ -76,7 +82,7 @@ public class TranslatorGui extends JFrame {
         }
         throbberLabel.setVisible(false);
 
-        JComboBox<String> languageComboBox = new JComboBox<>(targetLanguages);
+        languageComboBox = new JComboBox<>(targetLanguages);
         glossaryComboBox = new JComboBox<>();
         glossaryComboBox.setVisible(false);
         useGlossaryCheckBox = new JCheckBox("Use Glossary");
@@ -85,50 +91,93 @@ public class TranslatorGui extends JFrame {
         sourceLanguageLabel = new JLabel("Source Language:");
         sourceLanguageLabel.setVisible(false);
         jb = new JButton("Translate to selected Language");
-        JButton trans_all = new JButton("Translate to all Languages");
-        JCheckBox htmlCheckBox = new JCheckBox("HTML translation mode");
+        trans_all = new JButton("Translate to all Languages");
+        htmlCheckBox = new JCheckBox("HTML translation mode");
         htmlCheckBox.setSelected(true);
         progress = new JLabel("Progress will show here");
-        JLabel targetLanguageLabel = new JLabel("Target Language:");
+        targetLanguageLabel = new JLabel("Target Language:");
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(11, 1)); // Adjusted to 11 rows after removing API key field
-        panel.add(throbberLabel);
-        panel.add(inputButton);
-        panel.add(inputFileLabel);
-        panel.add(outputButton);
-        panel.add(outputFileLabel);
-        panel.add(trans_all);
-        panel.add(progress);
-        panel.add(targetLanguageLabel);
-        panel.add(languageComboBox);
-        panel.add(jb);
-        panel.add(buffer);
-        panel.add(useGlossaryCheckBox);
-        panel.add(glossaryComboBox);
-        panel.add(sourceLanguageLabel);
-        panel.add(sourceLanguageComboBox);
-        panel.add(htmlCheckBox);
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Throbber
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        panel.add(throbberLabel, gbc);
+
+        // Input Folder
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(inputButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(inputFileLabel, gbc);
+
+        // Output Folder
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(outputButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panel.add(outputFileLabel, gbc);
+
+        // Target Language
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(targetLanguageLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        panel.add(languageComboBox, gbc);
+
+        // Source Language
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(sourceLanguageLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        panel.add(sourceLanguageComboBox, gbc);
+
+        // Use Glossary
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(useGlossaryCheckBox, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        panel.add(glossaryComboBox, gbc);
+
+        // HTML Checkbox
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panel.add(htmlCheckBox, gbc);
+
+        // Translate Buttons
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panel.add(jb, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        panel.add(trans_all, gbc);
+
+        // Progress
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        panel.add(progress, gbc);
+
         getContentPane().add(panel, BorderLayout.CENTER);
     }
 
     private void setupActionListeners() {
-        JPanel panel = (JPanel) getContentPane().getComponent(0);
-        JLabel throbberLabel = (JLabel) panel.getComponent(0);
-        JButton inputButton = (JButton) panel.getComponent(1);
-        JLabel inputFileLabel = (JLabel) panel.getComponent(2);
-        JButton outputButton = (JButton) panel.getComponent(3);
-        JLabel outputFileLabel = (JLabel) panel.getComponent(4);
-        JButton trans_all = (JButton) panel.getComponent(5);
-        JLabel progress = (JLabel) panel.getComponent(6);
-        JLabel targetLanguageLabel = (JLabel) panel.getComponent(7);
-        JComboBox<String> languageComboBox = (JComboBox<String>) panel.getComponent(8);
-        JButton jb = (JButton) panel.getComponent(9);
-        JCheckBox useGlossaryCheckBox = (JCheckBox) panel.getComponent(11);
-        JComboBox<String> glossaryComboBox = (JComboBox<String>) panel.getComponent(12);
-        JLabel sourceLanguageLabel = (JLabel) panel.getComponent(13);
-        JComboBox<String> sourceLanguageComboBox = (JComboBox<String>) panel.getComponent(14);
-        JCheckBox htmlCheckBox = (JCheckBox) panel.getComponent(15);
         inputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JSystemFileChooser();
@@ -161,18 +210,25 @@ public class TranslatorGui extends JFrame {
             }
         });
 
-        useGlossaryCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                boolean selected = useGlossaryCheckBox.isSelected();
-                sourceLanguageComboBox.setVisible(selected);
-                sourceLanguageLabel.setVisible(selected);
-                glossaryComboBox.setVisible(selected);
+        useGlossaryCheckBox.addActionListener(e -> {
+            boolean selected = useGlossaryCheckBox.isSelected();
+            sourceLanguageComboBox.setVisible(selected);
+            sourceLanguageLabel.setVisible(selected);
+            glossaryComboBox.setVisible(selected);
+            if (selected) {
+                updateLanguagesFromGlossary();
+            }
+        });
+
+        glossaryComboBox.addActionListener(e -> {
+            if (useGlossaryCheckBox.isSelected()) {
+                updateLanguagesFromGlossary();
             }
         });
 
         jb.addActionListener(in -> {
             throbberLabel.setVisible(true);
-            handleTranslation(languageComboBox);
+            handleTranslation();
             throbberLabel.setVisible(false);
         });
 
@@ -182,9 +238,18 @@ public class TranslatorGui extends JFrame {
                 return;
             }
             throbberLabel.setVisible(true);
-            handleTranslationForAllLanguages(languageComboBox);
+            handleTranslationForAllLanguages();
             throbberLabel.setVisible(false);
         });
+    }
+
+    private void updateLanguagesFromGlossary() {
+        String selectedGlossary = (String) glossaryComboBox.getSelectedItem();
+        GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
+        if (glossaryInfo != null) {
+            sourceLanguageComboBox.setSelectedItem(glossaryInfo.getSourceLang());
+            languageComboBox.setSelectedItem(glossaryInfo.getTargetLang());
+        }
     }
 
     private void loadGlossaries(MainMenuManager mainMenu) {
@@ -205,7 +270,7 @@ public class TranslatorGui extends JFrame {
         }
     }
 
-    private void handleTranslation(JComboBox<String> languageComboBox) {
+    private void handleTranslation() {
         try {
             System.out.println("Translate button clicked");
             if (!inputFileLabel.getText().equals("No file selected")) {
@@ -247,7 +312,7 @@ public class TranslatorGui extends JFrame {
         }
     }
 
-    private void handleTranslationForAllLanguages(JComboBox<String> languageComboBox) {
+    private void handleTranslationForAllLanguages() {
         try {
             if (!inputFileLabel.getText().equals("No file selected")) {
                 String apiKey = Dotenv.load().get("DEEPL_API_KEY");
