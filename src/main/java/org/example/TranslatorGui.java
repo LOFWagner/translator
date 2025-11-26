@@ -215,6 +215,8 @@ public class TranslatorGui extends JFrame {
             sourceLanguageComboBox.setVisible(selected);
             sourceLanguageLabel.setVisible(selected);
             glossaryComboBox.setVisible(selected);
+            languageComboBox.setEnabled(!selected);
+            sourceLanguageComboBox.setEnabled(!selected);
             if (selected) {
                 updateLanguagesFromGlossary();
             }
