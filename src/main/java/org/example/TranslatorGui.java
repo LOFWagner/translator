@@ -24,7 +24,7 @@ public class TranslatorGui extends JFrame {
     private JLabel progress;
     public boolean html = true;
     private Translate t;
-    private String[] languages = {"en-us", "de", "pl", "nl", "es", "da", "sv", "tr", "it", "fr"};
+    private String[] targetLanguages = Constants.TRANSLATION_TARGET_LANGUAGES;
     private JComboBox<String> glossaryComboBox;
     private JCheckBox useGlossaryCheckBox;
     private JComboBox<String> sourceLanguageComboBox;
@@ -76,11 +76,11 @@ public class TranslatorGui extends JFrame {
         }
         throbberLabel.setVisible(false);
 
-        JComboBox<String> languageComboBox = new JComboBox<>(languages);
+        JComboBox<String> languageComboBox = new JComboBox<>(targetLanguages);
         glossaryComboBox = new JComboBox<>();
         glossaryComboBox.setVisible(false);
         useGlossaryCheckBox = new JCheckBox("Use Glossary");
-        sourceLanguageComboBox = new JComboBox<>(languages);
+        sourceLanguageComboBox = new JComboBox<>(Constants.TRANSLATION_SOURCE_LANGUAGES);
         sourceLanguageComboBox.setVisible(false);
         sourceLanguageLabel = new JLabel("Source Language:");
         sourceLanguageLabel.setVisible(false);
@@ -255,7 +255,7 @@ public class TranslatorGui extends JFrame {
                 if (toTranslate.isDirectory()) {
                     File[] fileList = toTranslate.listFiles();
                     for (File file : fileList) {
-                        for (String language : languages) {
+                        for (String language : targetLanguages) {
                             if (useGlossaryCheckBox.isSelected()) {
                                 String sourceLang = (String) sourceLanguageComboBox.getSelectedItem();
                                 String selectedGlossary = (String) glossaryComboBox.getSelectedItem();
