@@ -215,6 +215,8 @@ public class TranslatorGui extends JFrame {
             sourceLanguageComboBox.setVisible(selected);
             sourceLanguageLabel.setVisible(selected);
             glossaryComboBox.setVisible(selected);
+            languageComboBox.setEnabled(!selected);
+            sourceLanguageComboBox.setEnabled(!selected);
             if (selected) {
                 updateLanguagesFromGlossary();
             }
@@ -247,8 +249,8 @@ public class TranslatorGui extends JFrame {
         String selectedGlossary = (String) glossaryComboBox.getSelectedItem();
         GlossaryInfo glossaryInfo = glossaryMap.get(selectedGlossary);
         if (glossaryInfo != null) {
-            sourceLanguageComboBox.setSelectedItem(glossaryInfo.getSourceLang());
-            languageComboBox.setSelectedItem(glossaryInfo.getTargetLang());
+            sourceLanguageComboBox.setSelectedItem(glossaryInfo.getSourceLang().toUpperCase());
+            languageComboBox.setSelectedItem(glossaryInfo.getTargetLang().toUpperCase());
         }
     }
 
